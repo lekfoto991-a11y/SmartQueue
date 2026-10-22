@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <title>SmartQueue</title>
+  <!-- <link rel="icon" href="favicon.png"> -->
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100vh;          /* fallback สำหรับเบราว์เซอร์เก่า */
+      height: 100dvh;         /* กัน address bar บนมือถือบัง */
+      overflow: hidden;       /* ไม่มี scrollbar ที่หน้า wrapper */
+      background: #ffffff;
+      overscroll-behavior: none;
+    }
+
+    #app-frame {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      border: 0;
+      display: block;
+      background: #ffffff;
+    }
+
+    /* ---------- Loading screen ---------- */
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      background: #ffffff;
+      font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Thai", sans-serif;
+      color: #334155;
+      transition: opacity .5s ease, visibility .5s ease;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right)
+               env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    #loader.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #e2e8f0;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+    }
+    .app-name { font-size: 1.4rem; font-weight: 700; letter-spacing: .5px; }
+    .app-sub  { font-size: .9rem; color: #94a3b8; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div id="loader" role="status" aria-live="polite">
+    <div class="spinner"></div>
+    <div class="app-name">SmartQueue</div>
+    <div class="app-sub">กำลังโหลด...</div>
+  </div>
+
+  <iframe
+    id="app-frame"
+    title="SmartQueue"
+    allow="fullscreen"
+    allowfullscreen
+    referrerpolicy="no-referrer-when-downgrade">
+  </iframe>
+
+  <script>
+    (function () {
+      var APP_URL = "https://script.google.com/macros/s/AKfycbx9KscvQTrDcptSHCziXmtY8ED-sdZZ5LsXEQCGjgr8kS8a-ogaUeRbxRKs4erJz6Xb/exec?page=index&openExternalBrowser=1";
+
+      var frame  = document.getElementById("app-frame");
+      var loader = document.getElementById("loader");
+      var done   = false;
+
+      function hideLoader() {
+        if (done) return;
+        done = true;
+        loader.classList.add("hide");
+        setTimeout(function () { loader.remove(); }, 600);
+      }
+
+      frame.addEventListener("load", hideLoader);
+      // กันค้าง: ถ้าเน็ตช้าหรือ event ไม่ทำงาน ให้ปิด loader ภายใน 15 วินาที
+      setTimeout(hideLoader, 15000);
+
+      // ใส่ src ผ่าน JS (ไม่เขียนไว้ใน HTML ตรง ๆ)
+      frame.src = APP_URL;
+    })();
+  </script>
+</body>
+</html>
